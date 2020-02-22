@@ -17,13 +17,9 @@ name = "sharedlib"
 path = "src/lib/lib.rs"
 
 [[bin]]
-name = "server"
-path = "src/server.rs"
-
-[[bin]]
 name = "client"
 path = "src/client.rs"
 
 [[bin]]
-name = "vc-piazza"
-path = "src/vc-piazza.rs"
+name = "piazza"
+path = "src/piazza-server.rs"

@@ -2,21 +2,7 @@ syntax = "proto3";
 
 package ifc;
 
-service ProxyService {
-    rpc proxy (ProxyRequest) returns (ProxyResponse);
-}
-
-message ProxyRequest {
-    string vc = 1;
-    string command = 2;
-    Label label = 3;
-}
-
-message ProxyResponse {
-    string res = 1;
-}
-
-service VCPiazzaService {
+service PiazzaService {
     rpc post_msg (PostPayload) returns (PostResponse);
     rpc see_board (FetchPayload) returns (FetchResponse);
 }

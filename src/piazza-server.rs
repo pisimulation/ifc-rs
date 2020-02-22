@@ -4,9 +4,9 @@ use sharedlib::ifc_grpc::*;
 use sharedlib::*;
 use std::{net::SocketAddr, thread};
 
-struct VCPiazza;
+struct PiazzaServer;
 
-impl VCPiazzaService for VCPiazza {
+impl PiazzaService for PiazzaServer {
     fn post_msg(
         &self,
         _m: grpc::RequestOptions,
@@ -35,11 +35,10 @@ impl VCPiazzaService for VCPiazza {
 }
 
 fn main() {
+    let users = vec![PI_ADDR, AMIT_ADDR];
     let mut server_builder = grpc::ServerBuilder::new_plain();
-    server_builder.add_service(VCPiazzaServiceServer::new_service_def(VCPiazza));
-    server_builder
-        .http
-        .set_addr(SocketAddr::from(VC_PIAZZA_ADDR));
+    server_builder.add_service(PiazzaServiceServer::new_service_def(PiazzaServer));
+    server_builder.http.set_addr(SocketAddr::from(PIAZZA_ADDR));
     let server = server_builder.build().expect("build");
     // Blocks the main thread forever
     loop {

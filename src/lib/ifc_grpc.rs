@@ -21,67 +21,7 @@
 
 // interface
 
-pub trait ProxyService {
-    fn proxy(&self, o: ::grpc::RequestOptions, p: super::ifc::ProxyRequest) -> ::grpc::SingleResponse<super::ifc::ProxyResponse>;
-}
-
-// client
-
-pub struct ProxyServiceClient {
-    grpc_client: ::std::sync::Arc<::grpc::Client>,
-    method_proxy: ::std::sync::Arc<::grpc::rt::MethodDescriptor<super::ifc::ProxyRequest, super::ifc::ProxyResponse>>,
-}
-
-impl ::grpc::ClientStub for ProxyServiceClient {
-    fn with_client(grpc_client: ::std::sync::Arc<::grpc::Client>) -> Self {
-        ProxyServiceClient {
-            grpc_client: grpc_client,
-            method_proxy: ::std::sync::Arc::new(::grpc::rt::MethodDescriptor {
-                name: "/ifc.ProxyService/proxy".to_string(),
-                streaming: ::grpc::rt::GrpcStreaming::Unary,
-                req_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
-                resp_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
-            }),
-        }
-    }
-}
-
-impl ProxyService for ProxyServiceClient {
-    fn proxy(&self, o: ::grpc::RequestOptions, p: super::ifc::ProxyRequest) -> ::grpc::SingleResponse<super::ifc::ProxyResponse> {
-        self.grpc_client.call_unary(o, p, self.method_proxy.clone())
-    }
-}
-
-// server
-
-pub struct ProxyServiceServer;
-
-
-impl ProxyServiceServer {
-    pub fn new_service_def<H : ProxyService + 'static + Sync + Send + 'static>(handler: H) -> ::grpc::rt::ServerServiceDefinition {
-        let handler_arc = ::std::sync::Arc::new(handler);
-        ::grpc::rt::ServerServiceDefinition::new("/ifc.ProxyService",
-            vec![
-                ::grpc::rt::ServerMethod::new(
-                    ::std::sync::Arc::new(::grpc::rt::MethodDescriptor {
-                        name: "/ifc.ProxyService/proxy".to_string(),
-                        streaming: ::grpc::rt::GrpcStreaming::Unary,
-                        req_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
-                        resp_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
-                    }),
-                    {
-                        let handler_copy = handler_arc.clone();
-                        ::grpc::rt::MethodHandlerUnary::new(move |o, p| handler_copy.proxy(o, p))
-                    },
-                ),
-            ],
-        )
-    }
-}
-
-// interface
-
-pub trait VCPiazzaService {
+pub trait PiazzaService {
     fn post_msg(&self, o: ::grpc::RequestOptions, p: super::ifc::PostPayload) -> ::grpc::SingleResponse<super::ifc::PostResponse>;
 
     fn see_board(&self, o: ::grpc::RequestOptions, p: super::ifc::FetchPayload) -> ::grpc::SingleResponse<super::ifc::FetchResponse>;
@@ -89,24 +29,24 @@ pub trait VCPiazzaService {
 
 // client
 
-pub struct VCPiazzaServiceClient {
+pub struct PiazzaServiceClient {
     grpc_client: ::std::sync::Arc<::grpc::Client>,
     method_post_msg: ::std::sync::Arc<::grpc::rt::MethodDescriptor<super::ifc::PostPayload, super::ifc::PostResponse>>,
     method_see_board: ::std::sync::Arc<::grpc::rt::MethodDescriptor<super::ifc::FetchPayload, super::ifc::FetchResponse>>,
 }
 
-impl ::grpc::ClientStub for VCPiazzaServiceClient {
+impl ::grpc::ClientStub for PiazzaServiceClient {
     fn with_client(grpc_client: ::std::sync::Arc<::grpc::Client>) -> Self {
-        VCPiazzaServiceClient {
+        PiazzaServiceClient {
             grpc_client: grpc_client,
             method_post_msg: ::std::sync::Arc::new(::grpc::rt::MethodDescriptor {
-                name: "/ifc.VCPiazzaService/post_msg".to_string(),
+                name: "/ifc.PiazzaService/post_msg".to_string(),
                 streaming: ::grpc::rt::GrpcStreaming::Unary,
                 req_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
                 resp_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
             }),
             method_see_board: ::std::sync::Arc::new(::grpc::rt::MethodDescriptor {
-                name: "/ifc.VCPiazzaService/see_board".to_string(),
+                name: "/ifc.PiazzaService/see_board".to_string(),
                 streaming: ::grpc::rt::GrpcStreaming::Unary,
                 req_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
                 resp_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
@@ -115,7 +55,7 @@ impl ::grpc::ClientStub for VCPiazzaServiceClient {
     }
 }
 
-impl VCPiazzaService for VCPiazzaServiceClient {
+impl PiazzaService for PiazzaServiceClient {
     fn post_msg(&self, o: ::grpc::RequestOptions, p: super::ifc::PostPayload) -> ::grpc::SingleResponse<super::ifc::PostResponse> {
         self.grpc_client.call_unary(o, p, self.method_post_msg.clone())
     }
@@ -127,17 +67,17 @@ impl VCPiazzaService for VCPiazzaServiceClient {
 
 // server
 
-pub struct VCPiazzaServiceServer;
+pub struct PiazzaServiceServer;
 
 
-impl VCPiazzaServiceServer {
-    pub fn new_service_def<H : VCPiazzaService + 'static + Sync + Send + 'static>(handler: H) -> ::grpc::rt::ServerServiceDefinition {
+impl PiazzaServiceServer {
+    pub fn new_service_def<H : PiazzaService + 'static + Sync + Send + 'static>(handler: H) -> ::grpc::rt::ServerServiceDefinition {
         let handler_arc = ::std::sync::Arc::new(handler);
-        ::grpc::rt::ServerServiceDefinition::new("/ifc.VCPiazzaService",
+        ::grpc::rt::ServerServiceDefinition::new("/ifc.PiazzaService",
             vec![
                 ::grpc::rt::ServerMethod::new(
                     ::std::sync::Arc::new(::grpc::rt::MethodDescriptor {
-                        name: "/ifc.VCPiazzaService/post_msg".to_string(),
+                        name: "/ifc.PiazzaService/post_msg".to_string(),
                         streaming: ::grpc::rt::GrpcStreaming::Unary,
                         req_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
                         resp_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
@@ -149,7 +89,7 @@ impl VCPiazzaServiceServer {
                 ),
                 ::grpc::rt::ServerMethod::new(
                     ::std::sync::Arc::new(::grpc::rt::MethodDescriptor {
-                        name: "/ifc.VCPiazzaService/see_board".to_string(),
+                        name: "/ifc.PiazzaService/see_board".to_string(),
                         streaming: ::grpc::rt::GrpcStreaming::Unary,
                         req_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
                         resp_marshaller: Box::new(::grpc::protobuf::MarshallerProtobuf),
