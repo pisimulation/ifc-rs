@@ -1,0 +1,3 @@
+use sharedlib::*;
+
+fn main() {}

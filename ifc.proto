@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package ifc;
+
+service ProxyService {
+    rpc proxy (ProxyRequest) returns (ProxyResponse);
+}
+
+message ProxyRequest {
+    string vc = 1;
+    string command = 2;
+    Label label = 3;
+}
+
+message ProxyResponse {
+    string res = 1;
+}
+
+service VCPiazzaService {
+    rpc post_msg (PostPayload) returns (PostResponse);
+    rpc see_board (FetchPayload) returns (FetchResponse);
+}
+
+message PostPayload {
+    string msg = 1;
+    repeated string audience = 2;
+    bool anon = 3;
+    Label label = 4;
+}
+
+message FetchPayload {
+    Label label = 1;
+}
+
+message PostResponse {
+    uint32 msg_id = 1;
+}
+
+message FetchResponse {
+    string msg_board = 1;
+    Label label = 2;
+}
+
+message Label {
+    bool secrecy = 1;
+}

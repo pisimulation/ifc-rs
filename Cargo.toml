@@ -1,0 +1,29 @@
+[package]
+name = "ifc-rs"
+version = "0.1.0"
+authors = ["Pi <pisong@princeton.edu>"]
+edition = "2018"
+
+[dependencies]
+grpc            = "0.6.1"
+protobuf        = "~2"
+protoc-rust = "2.8.1"
+
+[build-dependencies]
+protoc-rust-grpc = "0.6.1"
+
+[lib]
+name = "sharedlib"
+path = "src/lib/lib.rs"
+
+[[bin]]
+name = "server"
+path = "src/server.rs"
+
+[[bin]]
+name = "client"
+path = "src/client.rs"
+
+[[bin]]
+name = "vc-piazza"
+path = "src/vc-piazza.rs"
