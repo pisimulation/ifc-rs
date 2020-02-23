@@ -30,7 +30,8 @@ const _PROTOBUF_VERSION_CHECK: () = ::protobuf::VERSION_2_8_2;
 pub struct PostPayload {
     // message fields
     pub msg: ::std::string::String,
-    pub audience: ::protobuf::RepeatedField<::std::string::String>,
+    pub author: ::std::string::String,
+    pub public: bool,
     pub anon: bool,
     pub label: ::protobuf::SingularPtrField<Label>,
     // special fields
@@ -75,32 +76,48 @@ impl PostPayload {
         ::std::mem::replace(&mut self.msg, ::std::string::String::new())
     }
 
-    // repeated string audience = 2;
+    // string author = 2;
 
 
-    pub fn get_audience(&self) -> &[::std::string::String] {
-        &self.audience
+    pub fn get_author(&self) -> &str {
+        &self.author
     }
-    pub fn clear_audience(&mut self) {
-        self.audience.clear();
+    pub fn clear_author(&mut self) {
+        self.author.clear();
     }
 
     // Param is passed by value, moved
-    pub fn set_audience(&mut self, v: ::protobuf::RepeatedField<::std::string::String>) {
-        self.audience = v;
+    pub fn set_author(&mut self, v: ::std::string::String) {
+        self.author = v;
     }
 
     // Mutable pointer to the field.
-    pub fn mut_audience(&mut self) -> &mut ::protobuf::RepeatedField<::std::string::String> {
-        &mut self.audience
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_author(&mut self) -> &mut ::std::string::String {
+        &mut self.author
     }
 
     // Take field
-    pub fn take_audience(&mut self) -> ::protobuf::RepeatedField<::std::string::String> {
-        ::std::mem::replace(&mut self.audience, ::protobuf::RepeatedField::new())
+    pub fn take_author(&mut self) -> ::std::string::String {
+        ::std::mem::replace(&mut self.author, ::std::string::String::new())
     }
 
-    // bool anon = 3;
+    // bool public = 3;
+
+
+    pub fn get_public(&self) -> bool {
+        self.public
+    }
+    pub fn clear_public(&mut self) {
+        self.public = false;
+    }
+
+    // Param is passed by value, moved
+    pub fn set_public(&mut self, v: bool) {
+        self.public = v;
+    }
+
+    // bool anon = 4;
 
 
     pub fn get_anon(&self) -> bool {
@@ -115,7 +132,7 @@ impl PostPayload {
         self.anon = v;
     }
 
-    // .ifc.Label label = 4;
+    // .ifc.Label label = 5;
 
 
     pub fn get_label(&self) -> &Label {
@@ -167,16 +184,23 @@ impl ::protobuf::Message for PostPayload {
                     ::protobuf::rt::read_singular_proto3_string_into(wire_type, is, &mut self.msg)?;
                 },
                 2 => {
-                    ::protobuf::rt::read_repeated_string_into(wire_type, is, &mut self.audience)?;
+                    ::protobuf::rt::read_singular_proto3_string_into(wire_type, is, &mut self.author)?;
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     }
                     let tmp = is.read_bool()?;
-                    self.anon = tmp;
+                    self.public = tmp;
                 },
                 4 => {
+                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
+                    }
+                    let tmp = is.read_bool()?;
+                    self.anon = tmp;
+                },
+                5 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.label)?;
                 },
                 _ => {
@@ -194,9 +218,12 @@ impl ::protobuf::Message for PostPayload {
         if !self.msg.is_empty() {
             my_size += ::protobuf::rt::string_size(1, &self.msg);
         }
-        for value in &self.audience {
-            my_size += ::protobuf::rt::string_size(2, &value);
-        };
+        if !self.author.is_empty() {
+            my_size += ::protobuf::rt::string_size(2, &self.author);
+        }
+        if self.public != false {
+            my_size += 2;
+        }
         if self.anon != false {
             my_size += 2;
         }
@@ -213,14 +240,17 @@ impl ::protobuf::Message for PostPayload {
         if !self.msg.is_empty() {
             os.write_string(1, &self.msg)?;
         }
-        for v in &self.audience {
-            os.write_string(2, &v)?;
-        };
+        if !self.author.is_empty() {
+            os.write_string(2, &self.author)?;
+        }
+        if self.public != false {
+            os.write_bool(3, self.public)?;
+        }
         if self.anon != false {
-            os.write_bool(3, self.anon)?;
+            os.write_bool(4, self.anon)?;
         }
         if let Some(ref v) = self.label.as_ref() {
-            os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited)?;
+            os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -271,10 +301,15 @@ impl ::protobuf::Message for PostPayload {
                     |m: &PostPayload| { &m.msg },
                     |m: &mut PostPayload| { &mut m.msg },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_repeated_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
-                    "audience",
-                    |m: &PostPayload| { &m.audience },
-                    |m: &mut PostPayload| { &mut m.audience },
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "author",
+                    |m: &PostPayload| { &m.author },
+                    |m: &mut PostPayload| { &mut m.author },
+                ));
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeBool>(
+                    "public",
+                    |m: &PostPayload| { &m.public },
+                    |m: &mut PostPayload| { &mut m.public },
                 ));
                 fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeBool>(
                     "anon",
@@ -309,7 +344,8 @@ impl ::protobuf::Message for PostPayload {
 impl ::protobuf::Clear for PostPayload {
     fn clear(&mut self) {
         self.msg.clear();
-        self.audience.clear();
+        self.author.clear();
+        self.public = false;
         self.anon = false;
         self.label.clear();
         self.unknown_fields.clear();
@@ -1063,17 +1099,18 @@ impl ::protobuf::reflect::ProtobufValue for Label {
 }
 
 static file_descriptor_proto_data: &'static [u8] = b"\
-    \n\tifc.proto\x12\x03ifc\"q\n\x0bPostPayload\x12\x10\n\x03msg\x18\x01\
-    \x20\x01(\tR\x03msg\x12\x1a\n\x08audience\x18\x02\x20\x03(\tR\x08audienc\
-    e\x12\x12\n\x04anon\x18\x03\x20\x01(\x08R\x04anon\x12\x20\n\x05label\x18\
-    \x04\x20\x01(\x0b2\n.ifc.LabelR\x05label\"0\n\x0cFetchPayload\x12\x20\n\
-    \x05label\x18\x01\x20\x01(\x0b2\n.ifc.LabelR\x05label\"%\n\x0cPostRespon\
-    se\x12\x15\n\x06msg_id\x18\x01\x20\x01(\rR\x05msgId\"N\n\rFetchResponse\
-    \x12\x1b\n\tmsg_board\x18\x01\x20\x01(\tR\x08msgBoard\x12\x20\n\x05label\
-    \x18\x02\x20\x01(\x0b2\n.ifc.LabelR\x05label\"!\n\x05Label\x12\x18\n\x07\
-    secrecy\x18\x01\x20\x01(\x08R\x07secrecy2t\n\rPiazzaService\x12/\n\x08po\
-    st_msg\x12\x10.ifc.PostPayload\x1a\x11.ifc.PostResponse\x122\n\tsee_boar\
-    d\x12\x11.ifc.FetchPayload\x1a\x12.ifc.FetchResponseb\x06proto3\
+    \n\tifc.proto\x12\x03ifc\"\x85\x01\n\x0bPostPayload\x12\x10\n\x03msg\x18\
+    \x01\x20\x01(\tR\x03msg\x12\x16\n\x06author\x18\x02\x20\x01(\tR\x06autho\
+    r\x12\x16\n\x06public\x18\x03\x20\x01(\x08R\x06public\x12\x12\n\x04anon\
+    \x18\x04\x20\x01(\x08R\x04anon\x12\x20\n\x05label\x18\x05\x20\x01(\x0b2\
+    \n.ifc.LabelR\x05label\"0\n\x0cFetchPayload\x12\x20\n\x05label\x18\x01\
+    \x20\x01(\x0b2\n.ifc.LabelR\x05label\"%\n\x0cPostResponse\x12\x15\n\x06m\
+    sg_id\x18\x01\x20\x01(\rR\x05msgId\"N\n\rFetchResponse\x12\x1b\n\tmsg_bo\
+    ard\x18\x01\x20\x01(\tR\x08msgBoard\x12\x20\n\x05label\x18\x02\x20\x01(\
+    \x0b2\n.ifc.LabelR\x05label\"!\n\x05Label\x12\x18\n\x07secrecy\x18\x01\
+    \x20\x01(\x08R\x07secrecy2t\n\rPiazzaService\x12/\n\x08post_msg\x12\x10.\
+    ifc.PostPayload\x1a\x11.ifc.PostResponse\x122\n\tsee_board\x12\x11.ifc.F\
+    etchPayload\x1a\x12.ifc.FetchResponseb\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy {

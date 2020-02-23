@@ -9,9 +9,10 @@ service PiazzaService {
 
 message PostPayload {
     string msg = 1;
-    repeated string audience = 2;
-    bool anon = 3;
-    Label label = 4;
+    string author = 2;
+    bool public = 3;
+    bool anon = 4;
+    Label label = 5;
 }
 
 message FetchPayload {
