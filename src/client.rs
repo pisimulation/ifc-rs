@@ -6,15 +6,17 @@ use std::sync::Arc;
 // $ cargo run --bin client
 
 fn main() {
+    // A post to add to Piazza board
     let post_req = PostPayload {
         post: Post {
             msg: "Question about HW 1".to_owned(),
             author: "Pi".to_owned(),
-            public: true,
-            anon: true,
-            label: Label { secrecy: true },
+            public: true,                   // visible to everyone
+            anon: true,                     // author anonymous to classmates
+            label: Label { secrecy: true }, // TODO: incorporate Amit's label-rs
         },
     };
+    // A request to see the board
     let fetch_req = FetchPayload {
         label: Label { secrecy: true },
     };
