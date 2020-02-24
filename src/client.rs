@@ -19,9 +19,15 @@ fn main() {
     let grpc_client =
         Arc::new(grpc::Client::new_plain("127.0.0.1", 10002, Default::default()).unwrap());
     let student = PiazzaServiceClient::with_client(grpc_client);
-    let res = student.post_msg(grpc::RequestOptions::new(), post_req.to_grpc());
-    match res.wait() {
+    let post_res = student.post_msg(grpc::RequestOptions::new(), post_req.to_grpc());
+    match post_res.wait() {
         Err(e) => panic!("Error: {}", e),
-        Ok((_, value, _)) => println!("[Pi] Got res {:?}", value),
+        Ok((_, value, _)) => println!("[Pi] POST RES {:?}", value),
+    }
+
+    let fetch_res = student.see_board(grpc::RequestOptions::new(), fetch_req.to_grpc());
+    match fetch_res.wait() {
+        Err(e) => panic!("Error: {}", e),
+        Ok((_, value, _)) => println!("[Pi] FETCH RES {:?}", value),
     }
 }
