@@ -3,6 +3,8 @@ use sharedlib::converter::*;
 use sharedlib::ifc_grpc::*;
 use std::sync::Arc;
 
+// $ cargo run --bin client
+
 fn main() {
     let post_req = PostPayload {
         post: Post {
@@ -17,11 +19,11 @@ fn main() {
         label: Label { secrecy: true },
     };
     let grpc_client =
-        Arc::new(grpc::Client::new_plain("127.0.0.1", 10002, Default::default()).unwrap());
+        Arc::new(grpc::Client::new_plain("127.0.0.1", 10001, Default::default()).unwrap());
     let student = PiazzaServiceClient::with_client(grpc_client);
     let post_res = student.post_msg(grpc::RequestOptions::new(), post_req.to_grpc());
     match post_res.wait() {
-        Err(e) => panic!("Error: {}", e),
+        Err(e) => panic!("Error: {:?}", e),
         Ok((_, value, _)) => println!("[Pi] POST RES {:?}", value),
     }
 
