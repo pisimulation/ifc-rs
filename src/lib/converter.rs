@@ -2,11 +2,7 @@ use crate::ifc as grpc;
 
 #[derive(Debug, Clone)]
 pub struct PostPayload {
-    pub msg: String,
-    pub author: String,
-    pub public: bool,
-    pub anon: bool,
-    pub label: Label,
+    pub post: Post,
 }
 
 #[derive(Debug, Clone)]
@@ -21,7 +17,21 @@ pub struct PostResponse {
 
 #[derive(Debug, Clone)]
 pub struct FetchResponse {
-    pub msg_board: String,
+    pub msg_board: Board,
+    pub label: Label,
+}
+
+#[derive(Debug, Clone)]
+pub struct Board {
+    pub posts: Vec<Post>,
+}
+
+#[derive(Debug, Clone)]
+pub struct Post {
+    pub msg: String,
+    pub author: String,
+    pub public: bool,
+    pub anon: bool,
     pub label: Label,
 }
 
@@ -33,21 +43,13 @@ pub struct Label {
 impl PostPayload {
     pub fn from_grpc(req: &grpc::PostPayload) -> Self {
         PostPayload {
-            msg: req.get_msg().to_owned(),
-            author: req.get_author().to_owned(),
-            public: req.get_public(),
-            anon: req.get_anon(),
-            label: Label::from_grpc(req.get_label()),
+            post: Post::from_grpc(req.get_post()),
         }
     }
 
     pub fn to_grpc(&self) -> grpc::PostPayload {
         let mut req = grpc::PostPayload::new();
-        req.set_msg(self.msg.to_owned());
-        req.set_author(self.author.to_owned());
-        req.set_public(self.public);
-        req.set_anon(self.anon);
-        req.set_label(self.label.to_grpc());
+        req.set_post(self.post.to_grpc());
         req
     }
 }
@@ -83,14 +85,52 @@ impl PostResponse {
 impl FetchResponse {
     pub fn from_grpc(req: &grpc::FetchResponse) -> Self {
         FetchResponse {
-            msg_board: req.get_msg_board().to_owned(),
+            msg_board: Board::from_grpc(req.get_msg_board()),
             label: Label::from_grpc(req.get_label()),
         }
     }
 
     pub fn to_grpc(&self) -> grpc::FetchResponse {
         let mut req = grpc::FetchResponse::new();
-        req.set_msg_board(self.msg_board.to_owned());
+        req.set_msg_board(self.msg_board.to_grpc());
+        req.set_label(self.label.to_grpc());
+        req
+    }
+}
+
+impl Board {
+    pub fn from_grpc(req: &grpc::Board) -> Self {
+        Board {
+            posts: req.get_posts().iter().map(Post::from_grpc).collect(),
+        }
+    }
+
+    pub fn to_grpc(&self) -> grpc::Board {
+        let mut req = grpc::Board::new();
+        req.set_posts(protobuf::RepeatedField::from_vec(
+            self.posts.iter().map(|post| post.to_grpc()).collect(),
+        ));
+        req
+    }
+}
+
+impl Post {
+    pub fn from_grpc(req: &grpc::Post) -> Self {
+        Post {
+            msg: req.get_msg().to_owned(),
+            author: req.get_author().to_owned(),
+            public: req.get_public(),
+            anon: req.get_anon(),
+            label: Label::from_grpc(req.get_label()),
+        }
+    }
+
+    pub fn to_grpc(&self) -> grpc::Post {
+        let mut req = grpc::Post::new();
+        req.set_msg(self.msg.to_owned());
+        req.set_author(self.author.to_owned());
+        req.set_public(self.public);
+        req.set_anon(self.anon);
         req.set_label(self.label.to_grpc());
         req
     }

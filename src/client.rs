@@ -5,11 +5,13 @@ use std::sync::Arc;
 
 fn main() {
     let post_req = PostPayload {
-        msg: "Question about HW 1".to_owned(),
-        author: "Pi".to_owned(),
-        public: true,
-        anon: true,
-        label: Label { secrecy: true },
+        post: Post {
+            msg: "Question about HW 1".to_owned(),
+            author: "Pi".to_owned(),
+            public: true,
+            anon: true,
+            label: Label { secrecy: true },
+        },
     };
     let fetch_req = FetchPayload {
         label: Label { secrecy: true },

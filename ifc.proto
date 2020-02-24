@@ -8,11 +8,7 @@ service PiazzaService {
 }
 
 message PostPayload {
-    string msg = 1;
-    string author = 2;
-    bool public = 3;
-    bool anon = 4;
-    Label label = 5;
+    Post post = 1;
 }
 
 message FetchPayload {
@@ -24,8 +20,20 @@ message PostResponse {
 }
 
 message FetchResponse {
-    string msg_board = 1;
+    Board msg_board = 1;
     Label label = 2;
+}
+
+message Board {
+    repeated Post posts = 1;
+}
+
+message Post {
+    string msg = 1;
+    string author = 2;
+    bool public = 3;
+    bool anon = 4;
+    Label label = 5;
 }
 
 message Label {
