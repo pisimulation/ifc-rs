@@ -11,15 +11,12 @@ fn main() {
         post: Post {
             msg: "Question about HW 1".to_owned(),
             author: "Pi".to_owned(),
-            public: true,                   // visible to everyone
-            anon: true,                     // author anonymous to classmates
-            label: Label { secrecy: true }, // TODO: incorporate Amit's label-rs
+            public: true, // visible to everyone
+            anon: true,   // author anonymous to classmates
         },
     };
     // A request to see the board
-    let fetch_req = FetchPayload {
-        label: Label { secrecy: true },
-    };
+    let fetch_req = FetchPayload {};
     let grpc_client =
         Arc::new(grpc::Client::new_plain("127.0.0.1", 10001, Default::default()).unwrap());
     let student = PiazzaServiceClient::with_client(grpc_client);

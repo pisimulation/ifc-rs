@@ -12,7 +12,6 @@ message PostPayload {
 }
 
 message FetchPayload {
-    Label label = 1;
 }
 
 message PostResponse {
@@ -33,7 +32,6 @@ message Post {
     string author = 2;
     bool public = 3;
     bool anon = 4;
-    Label label = 5;
 }
 
 message Label {

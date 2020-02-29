@@ -6,9 +6,7 @@ pub struct PostPayload {
 }
 
 #[derive(Debug, Clone)]
-pub struct FetchPayload {
-    pub label: Label,
-}
+pub struct FetchPayload {}
 
 #[derive(Debug, Clone)]
 pub struct PostResponse {
@@ -32,7 +30,6 @@ pub struct Post {
     pub author: String,
     pub public: bool,
     pub anon: bool,
-    pub label: Label,
 }
 
 #[derive(Debug, Clone)]
@@ -56,14 +53,11 @@ impl PostPayload {
 
 impl FetchPayload {
     pub fn from_grpc(req: &grpc::FetchPayload) -> Self {
-        FetchPayload {
-            label: Label::from_grpc(req.get_label()),
-        }
+        FetchPayload {}
     }
 
     pub fn to_grpc(&self) -> grpc::FetchPayload {
         let mut req = grpc::FetchPayload::new();
-        req.set_label(self.label.to_grpc());
         req
     }
 }
@@ -121,7 +115,6 @@ impl Post {
             author: req.get_author().to_owned(),
             public: req.get_public(),
             anon: req.get_anon(),
-            label: Label::from_grpc(req.get_label()),
         }
     }
 
@@ -131,7 +124,6 @@ impl Post {
         req.set_author(self.author.to_owned());
         req.set_public(self.public);
         req.set_anon(self.anon);
-        req.set_label(self.label.to_grpc());
         req
     }
 }

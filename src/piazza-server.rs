@@ -1,4 +1,5 @@
 use grpc;
+use label::dclabel::DCLabel;
 use sharedlib;
 use sharedlib::ifc::*;
 use sharedlib::ifc_grpc::*;
@@ -13,6 +14,7 @@ use std::{
 struct PiazzaServer {
     next_id: Arc<Mutex<u32>>,
     db: Arc<Mutex<sharedlib::converter::Board>>, // TODO: store this on MongoDB
+    taint: Arc<Mutex<DCLabel>>,
 }
 
 impl PiazzaService for PiazzaServer {
@@ -50,6 +52,7 @@ fn main() {
         db: Arc::new(Mutex::new(sharedlib::converter::Board {
             posts: Vec::new(),
         })),
+        taint: Arc::new(Mutex::new(DCLabel::public())),
     }));
     server_builder
         .http
