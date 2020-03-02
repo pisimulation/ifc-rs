@@ -6,7 +6,9 @@ pub struct PostPayload {
 }
 
 #[derive(Debug, Clone)]
-pub struct FetchPayload {}
+pub struct FetchPayload {
+    pub reader: String,
+}
 
 #[derive(Debug, Clone)]
 pub struct PostResponse {
@@ -16,7 +18,6 @@ pub struct PostResponse {
 #[derive(Debug, Clone)]
 pub struct FetchResponse {
     pub msg_board: Board,
-    pub label: Label,
 }
 
 #[derive(Debug, Clone)]
@@ -30,11 +31,6 @@ pub struct Post {
     pub author: String,
     pub public: bool,
     pub anon: bool,
-}
-
-#[derive(Debug, Clone)]
-pub struct Label {
-    pub secrecy: bool,
 }
 
 impl PostPayload {
@@ -53,11 +49,14 @@ impl PostPayload {
 
 impl FetchPayload {
     pub fn from_grpc(req: &grpc::FetchPayload) -> Self {
-        FetchPayload {}
+        FetchPayload {
+            reader: req.get_reader().to_owned(),
+        }
     }
 
     pub fn to_grpc(&self) -> grpc::FetchPayload {
         let mut req = grpc::FetchPayload::new();
+        req.set_reader(self.reader.to_owned());
         req
     }
 }
@@ -80,14 +79,12 @@ impl FetchResponse {
     pub fn from_grpc(req: &grpc::FetchResponse) -> Self {
         FetchResponse {
             msg_board: Board::from_grpc(req.get_msg_board()),
-            label: Label::from_grpc(req.get_label()),
         }
     }
 
     pub fn to_grpc(&self) -> grpc::FetchResponse {
         let mut req = grpc::FetchResponse::new();
         req.set_msg_board(self.msg_board.to_grpc());
-        req.set_label(self.label.to_grpc());
         req
     }
 }
@@ -124,20 +121,6 @@ impl Post {
         req.set_author(self.author.to_owned());
         req.set_public(self.public);
         req.set_anon(self.anon);
-        req
-    }
-}
-
-impl Label {
-    pub fn from_grpc(req: &grpc::Label) -> Self {
-        Label {
-            secrecy: req.get_secrecy(),
-        }
-    }
-
-    pub fn to_grpc(&self) -> grpc::Label {
-        let mut req = grpc::Label::new();
-        req.set_secrecy(self.secrecy);
         req
     }
 }

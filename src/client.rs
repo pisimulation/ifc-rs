@@ -6,17 +6,20 @@ use std::sync::Arc;
 // $ cargo run --bin client
 
 fn main() {
+    let client = "Pi";
     // A post to add to Piazza board
     let post_req = PostPayload {
         post: Post {
             msg: "Question about HW 1".to_owned(),
-            author: "Pi".to_owned(),
+            author: "not pi".to_owned(),
             public: true, // visible to everyone
             anon: true,   // author anonymous to classmates
         },
     };
     // A request to see the board
-    let fetch_req = FetchPayload {};
+    let fetch_req = FetchPayload {
+        reader: client.to_owned(),
+    };
     let grpc_client =
         Arc::new(grpc::Client::new_plain("127.0.0.1", 10001, Default::default()).unwrap());
     let student = PiazzaServiceClient::with_client(grpc_client);

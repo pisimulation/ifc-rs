@@ -1,5 +1,5 @@
 use grpc;
-use label::dclabel::DCLabel;
+use label::{dclabel::DCLabel, Label};
 use sharedlib;
 use sharedlib::ifc::*;
 use sharedlib::ifc_grpc::*;
@@ -13,7 +13,7 @@ use std::{
 
 struct PiazzaServer {
     next_id: Arc<Mutex<u32>>,
-    db: Arc<Mutex<sharedlib::converter::Board>>, // TODO: store this on MongoDB
+    db: Arc<Mutex<Vec<(sharedlib::converter::Post, DCLabel)>>>, // TODO: store this on MongoDB
     taint: Arc<Mutex<DCLabel>>,
 }
 
@@ -23,10 +23,11 @@ impl PiazzaService for PiazzaServer {
         _m: grpc::RequestOptions,
         req: PostPayload,
     ) -> grpc::SingleResponse<PostResponse> {
+        let post = sharedlib::converter::Post::from_grpc(req.get_post());
+        let label = DCLabel::new(post.author.to_owned(), post.author.to_owned());
         println!("[Piazza] Got a post");
         (*self.db.lock().unwrap())
-            .posts
-            .push(sharedlib::converter::Post::from_grpc(req.get_post()));
+            .push((sharedlib::converter::Post::from_grpc(req.get_post()), label));
         let mut r = PostResponse::new();
         r.set_msg_id(*self.next_id.lock().unwrap());
         *self.next_id.lock().unwrap() += 1;
@@ -38,9 +39,20 @@ impl PiazzaService for PiazzaServer {
         _m: grpc::RequestOptions,
         req: FetchPayload,
     ) -> grpc::SingleResponse<FetchResponse> {
-        println!("[Piazzza] Got see_board");
+        println!("[Piazza] Got see_board");
         let mut r = FetchResponse::new();
-        r.set_msg_board((*self.db.lock().unwrap()).to_grpc());
+        let principal = DCLabel::new(req.reader, true);
+        let readable_posts = (*self.db.lock().unwrap())
+            .iter()
+            .filter(|(post, label)| label.can_flow_to(&principal))
+            .map(|(post, label)| post.clone())
+            .collect();
+        r.set_msg_board(
+            sharedlib::converter::Board {
+                posts: readable_posts,
+            }
+            .to_grpc(),
+        );
         grpc::SingleResponse::completed(r)
     }
 }
@@ -49,9 +61,7 @@ fn main() {
     let mut server_builder = grpc::ServerBuilder::new_plain();
     server_builder.add_service(PiazzaServiceServer::new_service_def(PiazzaServer {
         next_id: Arc::new(Mutex::new(0)),
-        db: Arc::new(Mutex::new(sharedlib::converter::Board {
-            posts: Vec::new(),
-        })),
+        db: Arc::new(Mutex::new(Vec::new())),
         taint: Arc::new(Mutex::new(DCLabel::public())),
     }));
     server_builder

@@ -12,6 +12,7 @@ message PostPayload {
 }
 
 message FetchPayload {
+    string reader = 1;
 }
 
 message PostResponse {
@@ -20,7 +21,6 @@ message PostResponse {
 
 message FetchResponse {
     Board msg_board = 1;
-    Label label = 2;
 }
 
 message Board {
@@ -32,8 +32,4 @@ message Post {
     string author = 2;
     bool public = 3;
     bool anon = 4;
-}
-
-message Label {
-    bool secrecy = 1;
 }

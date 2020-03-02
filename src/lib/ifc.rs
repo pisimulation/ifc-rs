@@ -212,6 +212,8 @@ impl ::protobuf::reflect::ProtobufValue for PostPayload {
 
 #[derive(PartialEq,Clone,Default)]
 pub struct FetchPayload {
+    // message fields
+    pub reader: ::std::string::String,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -227,6 +229,32 @@ impl FetchPayload {
     pub fn new() -> FetchPayload {
         ::std::default::Default::default()
     }
+
+    // string reader = 1;
+
+
+    pub fn get_reader(&self) -> &str {
+        &self.reader
+    }
+    pub fn clear_reader(&mut self) {
+        self.reader.clear();
+    }
+
+    // Param is passed by value, moved
+    pub fn set_reader(&mut self, v: ::std::string::String) {
+        self.reader = v;
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_reader(&mut self) -> &mut ::std::string::String {
+        &mut self.reader
+    }
+
+    // Take field
+    pub fn take_reader(&mut self) -> ::std::string::String {
+        ::std::mem::replace(&mut self.reader, ::std::string::String::new())
+    }
 }
 
 impl ::protobuf::Message for FetchPayload {
@@ -238,6 +266,9 @@ impl ::protobuf::Message for FetchPayload {
         while !is.eof()? {
             let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
+                1 => {
+                    ::protobuf::rt::read_singular_proto3_string_into(wire_type, is, &mut self.reader)?;
+                },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
                 },
@@ -250,12 +281,18 @@ impl ::protobuf::Message for FetchPayload {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
+        if !self.reader.is_empty() {
+            my_size += ::protobuf::rt::string_size(1, &self.reader);
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
+        if !self.reader.is_empty() {
+            os.write_string(1, &self.reader)?;
+        }
         os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
     }
@@ -297,7 +334,12 @@ impl ::protobuf::Message for FetchPayload {
         };
         unsafe {
             descriptor.get(|| {
-                let fields = ::std::vec::Vec::new();
+                let mut fields = ::std::vec::Vec::new();
+                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeString>(
+                    "reader",
+                    |m: &FetchPayload| { &m.reader },
+                    |m: &mut FetchPayload| { &mut m.reader },
+                ));
                 ::protobuf::reflect::MessageDescriptor::new::<FetchPayload>(
                     "FetchPayload",
                     fields,
@@ -320,6 +362,7 @@ impl ::protobuf::Message for FetchPayload {
 
 impl ::protobuf::Clear for FetchPayload {
     fn clear(&mut self) {
+        self.reader.clear();
         self.unknown_fields.clear();
     }
 }
@@ -502,7 +545,6 @@ impl ::protobuf::reflect::ProtobufValue for PostResponse {
 pub struct FetchResponse {
     // message fields
     pub msg_board: ::protobuf::SingularPtrField<Board>,
-    pub label: ::protobuf::SingularPtrField<Label>,
     // special fields
     pub unknown_fields: ::protobuf::UnknownFields,
     pub cached_size: ::protobuf::CachedSize,
@@ -551,49 +593,11 @@ impl FetchResponse {
     pub fn take_msg_board(&mut self) -> Board {
         self.msg_board.take().unwrap_or_else(|| Board::new())
     }
-
-    // .ifc.Label label = 2;
-
-
-    pub fn get_label(&self) -> &Label {
-        self.label.as_ref().unwrap_or_else(|| Label::default_instance())
-    }
-    pub fn clear_label(&mut self) {
-        self.label.clear();
-    }
-
-    pub fn has_label(&self) -> bool {
-        self.label.is_some()
-    }
-
-    // Param is passed by value, moved
-    pub fn set_label(&mut self, v: Label) {
-        self.label = ::protobuf::SingularPtrField::some(v);
-    }
-
-    // Mutable pointer to the field.
-    // If field is not initialized, it is initialized with default value first.
-    pub fn mut_label(&mut self) -> &mut Label {
-        if self.label.is_none() {
-            self.label.set_default();
-        }
-        self.label.as_mut().unwrap()
-    }
-
-    // Take field
-    pub fn take_label(&mut self) -> Label {
-        self.label.take().unwrap_or_else(|| Label::new())
-    }
 }
 
 impl ::protobuf::Message for FetchResponse {
     fn is_initialized(&self) -> bool {
         for v in &self.msg_board {
-            if !v.is_initialized() {
-                return false;
-            }
-        };
-        for v in &self.label {
             if !v.is_initialized() {
                 return false;
             }
@@ -607,9 +611,6 @@ impl ::protobuf::Message for FetchResponse {
             match field_number {
                 1 => {
                     ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.msg_board)?;
-                },
-                2 => {
-                    ::protobuf::rt::read_singular_message_into(wire_type, is, &mut self.label)?;
                 },
                 _ => {
                     ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
@@ -627,10 +628,6 @@ impl ::protobuf::Message for FetchResponse {
             let len = v.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         }
-        if let Some(ref v) = self.label.as_ref() {
-            let len = v.compute_size();
-            my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
-        }
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
@@ -639,11 +636,6 @@ impl ::protobuf::Message for FetchResponse {
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
         if let Some(ref v) = self.msg_board.as_ref() {
             os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited)?;
-            os.write_raw_varint32(v.get_cached_size())?;
-            v.write_to_with_cached_sizes(os)?;
-        }
-        if let Some(ref v) = self.label.as_ref() {
-            os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited)?;
             os.write_raw_varint32(v.get_cached_size())?;
             v.write_to_with_cached_sizes(os)?;
         }
@@ -694,11 +686,6 @@ impl ::protobuf::Message for FetchResponse {
                     |m: &FetchResponse| { &m.msg_board },
                     |m: &mut FetchResponse| { &mut m.msg_board },
                 ));
-                fields.push(::protobuf::reflect::accessor::make_singular_ptr_field_accessor::<_, ::protobuf::types::ProtobufTypeMessage<Label>>(
-                    "label",
-                    |m: &FetchResponse| { &m.label },
-                    |m: &mut FetchResponse| { &mut m.label },
-                ));
                 ::protobuf::reflect::MessageDescriptor::new::<FetchResponse>(
                     "FetchResponse",
                     fields,
@@ -722,7 +709,6 @@ impl ::protobuf::Message for FetchResponse {
 impl ::protobuf::Clear for FetchResponse {
     fn clear(&mut self) {
         self.msg_board.clear();
-        self.label.clear();
         self.unknown_fields.clear();
     }
 }
@@ -1196,182 +1182,18 @@ impl ::protobuf::reflect::ProtobufValue for Post {
     }
 }
 
-#[derive(PartialEq,Clone,Default)]
-pub struct Label {
-    // message fields
-    pub secrecy: bool,
-    // special fields
-    pub unknown_fields: ::protobuf::UnknownFields,
-    pub cached_size: ::protobuf::CachedSize,
-}
-
-impl<'a> ::std::default::Default for &'a Label {
-    fn default() -> &'a Label {
-        <Label as ::protobuf::Message>::default_instance()
-    }
-}
-
-impl Label {
-    pub fn new() -> Label {
-        ::std::default::Default::default()
-    }
-
-    // bool secrecy = 1;
-
-
-    pub fn get_secrecy(&self) -> bool {
-        self.secrecy
-    }
-    pub fn clear_secrecy(&mut self) {
-        self.secrecy = false;
-    }
-
-    // Param is passed by value, moved
-    pub fn set_secrecy(&mut self, v: bool) {
-        self.secrecy = v;
-    }
-}
-
-impl ::protobuf::Message for Label {
-    fn is_initialized(&self) -> bool {
-        true
-    }
-
-    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        while !is.eof()? {
-            let (field_number, wire_type) = is.read_tag_unpack()?;
-            match field_number {
-                1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
-                    }
-                    let tmp = is.read_bool()?;
-                    self.secrecy = tmp;
-                },
-                _ => {
-                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
-                },
-            };
-        }
-        ::std::result::Result::Ok(())
-    }
-
-    // Compute sizes of nested messages
-    #[allow(unused_variables)]
-    fn compute_size(&self) -> u32 {
-        let mut my_size = 0;
-        if self.secrecy != false {
-            my_size += 2;
-        }
-        my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        self.cached_size.set(my_size);
-        my_size
-    }
-
-    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream<'_>) -> ::protobuf::ProtobufResult<()> {
-        if self.secrecy != false {
-            os.write_bool(1, self.secrecy)?;
-        }
-        os.write_unknown_fields(self.get_unknown_fields())?;
-        ::std::result::Result::Ok(())
-    }
-
-    fn get_cached_size(&self) -> u32 {
-        self.cached_size.get()
-    }
-
-    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
-        &self.unknown_fields
-    }
-
-    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
-        &mut self.unknown_fields
-    }
-
-    fn as_any(&self) -> &dyn (::std::any::Any) {
-        self as &dyn (::std::any::Any)
-    }
-    fn as_any_mut(&mut self) -> &mut dyn (::std::any::Any) {
-        self as &mut dyn (::std::any::Any)
-    }
-    fn into_any(self: Box<Self>) -> ::std::boxed::Box<dyn (::std::any::Any)> {
-        self
-    }
-
-    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
-        Self::descriptor_static()
-    }
-
-    fn new() -> Label {
-        Label::new()
-    }
-
-    fn descriptor_static() -> &'static ::protobuf::reflect::MessageDescriptor {
-        static mut descriptor: ::protobuf::lazy::Lazy<::protobuf::reflect::MessageDescriptor> = ::protobuf::lazy::Lazy {
-            lock: ::protobuf::lazy::ONCE_INIT,
-            ptr: 0 as *const ::protobuf::reflect::MessageDescriptor,
-        };
-        unsafe {
-            descriptor.get(|| {
-                let mut fields = ::std::vec::Vec::new();
-                fields.push(::protobuf::reflect::accessor::make_simple_field_accessor::<_, ::protobuf::types::ProtobufTypeBool>(
-                    "secrecy",
-                    |m: &Label| { &m.secrecy },
-                    |m: &mut Label| { &mut m.secrecy },
-                ));
-                ::protobuf::reflect::MessageDescriptor::new::<Label>(
-                    "Label",
-                    fields,
-                    file_descriptor_proto()
-                )
-            })
-        }
-    }
-
-    fn default_instance() -> &'static Label {
-        static mut instance: ::protobuf::lazy::Lazy<Label> = ::protobuf::lazy::Lazy {
-            lock: ::protobuf::lazy::ONCE_INIT,
-            ptr: 0 as *const Label,
-        };
-        unsafe {
-            instance.get(Label::new)
-        }
-    }
-}
-
-impl ::protobuf::Clear for Label {
-    fn clear(&mut self) {
-        self.secrecy = false;
-        self.unknown_fields.clear();
-    }
-}
-
-impl ::std::fmt::Debug for Label {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
-        ::protobuf::text_format::fmt(self, f)
-    }
-}
-
-impl ::protobuf::reflect::ProtobufValue for Label {
-    fn as_ref(&self) -> ::protobuf::reflect::ProtobufValueRef {
-        ::protobuf::reflect::ProtobufValueRef::Message(self)
-    }
-}
-
 static file_descriptor_proto_data: &'static [u8] = b"\
     \n\tifc.proto\x12\x03ifc\",\n\x0bPostPayload\x12\x1d\n\x04post\x18\x01\
-    \x20\x01(\x0b2\t.ifc.PostR\x04post\"\x0e\n\x0cFetchPayload\"%\n\x0cPostR\
-    esponse\x12\x15\n\x06msg_id\x18\x01\x20\x01(\rR\x05msgId\"Z\n\rFetchResp\
-    onse\x12'\n\tmsg_board\x18\x01\x20\x01(\x0b2\n.ifc.BoardR\x08msgBoard\
-    \x12\x20\n\x05label\x18\x02\x20\x01(\x0b2\n.ifc.LabelR\x05label\"(\n\x05\
-    Board\x12\x1f\n\x05posts\x18\x01\x20\x03(\x0b2\t.ifc.PostR\x05posts\"\\\
-    \n\x04Post\x12\x10\n\x03msg\x18\x01\x20\x01(\tR\x03msg\x12\x16\n\x06auth\
-    or\x18\x02\x20\x01(\tR\x06author\x12\x16\n\x06public\x18\x03\x20\x01(\
-    \x08R\x06public\x12\x12\n\x04anon\x18\x04\x20\x01(\x08R\x04anon\"!\n\x05\
-    Label\x12\x18\n\x07secrecy\x18\x01\x20\x01(\x08R\x07secrecy2t\n\rPiazzaS\
-    ervice\x12/\n\x08post_msg\x12\x10.ifc.PostPayload\x1a\x11.ifc.PostRespon\
-    se\x122\n\tsee_board\x12\x11.ifc.FetchPayload\x1a\x12.ifc.FetchResponseb\
-    \x06proto3\
+    \x20\x01(\x0b2\t.ifc.PostR\x04post\"&\n\x0cFetchPayload\x12\x16\n\x06rea\
+    der\x18\x01\x20\x01(\tR\x06reader\"%\n\x0cPostResponse\x12\x15\n\x06msg_\
+    id\x18\x01\x20\x01(\rR\x05msgId\"8\n\rFetchResponse\x12'\n\tmsg_board\
+    \x18\x01\x20\x01(\x0b2\n.ifc.BoardR\x08msgBoard\"(\n\x05Board\x12\x1f\n\
+    \x05posts\x18\x01\x20\x03(\x0b2\t.ifc.PostR\x05posts\"\\\n\x04Post\x12\
+    \x10\n\x03msg\x18\x01\x20\x01(\tR\x03msg\x12\x16\n\x06author\x18\x02\x20\
+    \x01(\tR\x06author\x12\x16\n\x06public\x18\x03\x20\x01(\x08R\x06public\
+    \x12\x12\n\x04anon\x18\x04\x20\x01(\x08R\x04anon2t\n\rPiazzaService\x12/\
+    \n\x08post_msg\x12\x10.ifc.PostPayload\x1a\x11.ifc.PostResponse\x122\n\t\
+    see_board\x12\x11.ifc.FetchPayload\x1a\x12.ifc.FetchResponseb\x06proto3\
 ";
 
 static mut file_descriptor_proto_lazy: ::protobuf::lazy::Lazy<::protobuf::descriptor::FileDescriptorProto> = ::protobuf::lazy::Lazy {
